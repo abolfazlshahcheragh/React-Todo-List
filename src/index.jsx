@@ -1,3 +1,6 @@
-import ReactDOM from 'react-dom'; 
+import ReactDOM from 'react-dom/client';
+import App from "./components/App";
+import "./styles/style.css";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<h3>TODO LIST</h3>);
+root.render(<App />);

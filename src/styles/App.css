@@ -1,0 +1,301 @@
+@font-face {
+    font-family: JosefinSans;
+    src: url("../assets/fonts/JosefinSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: JosefinSansBold;
+    src: url("../assets/fonts/JosefinSans-Bold.ttf");
+}
+
+:root {
+    --link-active: #4977db;
+    /* color primary (RGB)*/
+    --Check-Background-first: 87, 221, 255;
+    /* active*/
+    --Check-Background-second: 192, 88, 243;
+    /* Light Theme */
+    --lt-root-background: #F5F5F5;
+    --lt-app-background: #ffffff;
+    --lt-txt-default: #a8a8a8;
+    --lt-txt-hover: #505050;
+    --lt-txt-light: #dcdcdc;
+    /* Dark Theme */
+    --dt-root-background: #181824;
+    --dt-app-background: #25273C;
+    --dt-txt-default: #BCBED5;
+    --dt-txt-hover: #CED2DE;
+    --dt-txt-dark: #484A63;
+
+    /* Typography */
+    --font-family: JosefinSans;
+    --font-family-bold: JosefinSansBold;
+}
+
+#app {
+    z-index: 1;
+    width: 420px;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    /* gap 30px gap  */
+    grid-template-rows: repeat(6, 1fr);
+    grid-auto-rows: auto;
+    /* border: 1px solid #f00; */
+    margin: 0 30px;
+}
+
+
+#bgImage {
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 250px;
+}
+
+/* ========================== app header ============================ */
+#header {
+    grid-row: 1/1 span;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* border: 1px solid #000; */
+    margin: 50px 0 40px 0;
+}
+
+#header>h3 {
+    align-self: center;
+    justify-self: start;
+    font-family: var(--font-family-bold);
+    letter-spacing: 10px;
+    text-transform: uppercase;
+    color: #F7F7F9;
+}
+
+#header>button {
+    align-self: center;
+    justify-self: end;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: grid;
+    margin-bottom: 5px;
+}
+
+#header>button>img {
+    transform: scale(.85);
+}
+
+/* ========================== todo maker ============================ */
+#todo-maker {
+    grid-row: 2/1 span;
+    /* border: 1px solid #f00; */
+    height: 50px;
+    margin-bottom: 20px;
+    /*  */
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    background: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#todo-maker input {
+    width: 100%;
+}
+
+/* ========================== task state (checkBox) ============================ */
+
+.check-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.check-container .check-box {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+}
+
+.not-checked {
+    border: 2px solid var(--lt-txt-light);
+    background: transparent;
+}
+
+.checked {
+    border: none;
+    background: linear-gradient(120deg, rgb(var(--Check-Background-first)), rgb(var(--Check-Background-second)));
+}
+
+/* ========================== input task ============================ */
+#todo-maker>input {
+    border: none;
+    caret-color: var(--link-active);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: .8rem;
+    /* border: 1px solid #000; */
+    color: var(--dt-txt-dark);
+    font-family: var(--font-family);
+}
+
+/* #todo-maker>input::placeholder {} */
+
+
+/* ========================== todo container ============================ */
+#todo-container {
+    grid-row: 3/1 span;
+    /* background: blue; */
+    /* border: 1px solid #f00; */
+    height: 300px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: var(--lt-app-background);
+    display: grid;
+    grid-template: 1fr 50px / 1fr;
+}
+
+/* ========================== todo list ============================ */
+#todo-container>ul {
+
+    list-style-type: none;
+    display: grid;
+    grid-template: 50px / 1fr;
+    grid-auto-rows: 50px;
+    overflow-y: scroll;
+}
+
+#todo-container>ul::-webkit-scrollbar {
+    display: none;
+}
+#todo-container>ul>li:first-child{
+    border-top: none;
+}
+#todo-container>ul>li {
+    border-top: 3px solid var(--lt-root-background);
+    width: 100%;
+    display: grid;
+    grid-template: 1fr/ 50px 1fr 50px;
+
+}
+
+#todo-container>ul>li>p {
+    display: flex;
+    align-items: center;
+    font-size: .8rem;
+    margin: 0 5px;
+    cursor: pointer;
+    font-family: var(--font-family);
+}
+
+.not-completed {
+    color: var(--lt-txt-hover);
+}
+
+.completed {
+    color: var(--lt-txt-default);
+    text-decoration: line-through;
+    font-style: italic;
+}
+
+#todo-container>ul>li button {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: .5rem;
+    cursor: pointer;
+}
+
+#todo-container>ul>li button.delete-box {
+    border: none;
+    border-radius: 0;
+    border-radius: 50%;
+    background: transparent;
+}
+
+#todo-container>ul>li button.delete-box img {
+    transform: scale(.8);
+}
+
+/* ========================== todo state ============================ */
+#todo-state {
+    border-top: 3px solid var(--lt-root-background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 10PX;
+}
+
+#items-count {
+    flex: 1 1 33%;
+    font-size: .5rem;
+    font-family: var(--font-family);
+    color: var(--lt-txt-default);
+}
+
+.filter {
+    flex: 1 1 33%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.filter :nth-child(2) {
+    margin: 0 10px;
+}
+
+.btn {
+    border: none;
+    background: transparent;
+    color: var(--dt-txt-default);
+    cursor: pointer;
+    font-size: .5rem;
+    text-transform: capitalize;
+}
+
+.btn-hover{
+    color: var(--link-active);
+}
+
+#clear-completed {
+    flex: 1 1 33%;
+    display: flex;
+    justify-content: end;
+    font-family: var(--font-family);
+}
+#clear-completed:active{
+    color: var(--link-active); 
+}
+
+.bgRed{
+    background: red;
+}
+
+/* ========================== other ============================ */
+
+.filter {
+    grid-row: 4/1 span;
+    background: white;
+    height: 50px;
+}
+
+#todo-guide {
+    margin-top: 10px;
+    grid-row: 5/1 span;
+    background: yellow;
+    font-size: 1rem;
+    height: 1em;
+}
