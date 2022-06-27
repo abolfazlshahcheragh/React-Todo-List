@@ -14,146 +14,266 @@ class App extends Component {
         this.state = {
             device: "mobile",
             dimensions: [window.innerWidth, window.innerHeight],
+            // theme: (typeof localStorage.getItem('todoApp') === "string") ? JSON.parse(localStorage.getItem("todoApp")).theme : {},
             theme: {
-                backgroundImage: IMAGES.bgMobileLight,
+                type: (typeof localStorage.getItem('todoApp') === "string") ? JSON.parse(localStorage.getItem("todoApp")).theme.type : "light",
+                backgroundImage: [IMAGES.bgMobileLight, IMAGES.bgMobileDark],
             },
-            todos: [
-                { id: 1, name: "item-1", isActive: true, isDone: false },
-                { id: 2, name: "item-2", isActive: false, isDone: false },
-                { id: 3, name: "item-3", isActive: false, isDone: true },
-            ],
-            todoList: []
+            // main list
+            mainList: (typeof localStorage.getItem('todoApp') === "string") ? JSON.parse(localStorage.getItem("todoApp")).todos : [],
+            // filter list
+            todoList: [],
+            filterType: "all",
+            draggable: true,
         }
-
+        this.filterRef = createRef();
         this.filterAllRef = createRef();
         this.filterActiveRef = createRef();
         this.filterCompletedRef = createRef();
     }
 
     render() {
+        const { theme } = this.state;
+        const backgroundImage = (theme.type === "light") ? theme.backgroundImage[0] : theme.backgroundImage[1];
+
         return (
-            <>
-                <img src={IMAGES.bgMobileLight} id="bgImage" alt="" />
+            <section id='wrapper' className={theme.type}>
+                <img src={backgroundImage} id="bgImage" alt="" />
                 <section id='app'>
                     <section id='header'>
                         <h3>todo</h3>
-                        <button id='toggle-theme'>
-                            <img src={IMAGES.iconMoon} alt="" />
+                        <button onClick={this.toggleTheme}>
+                            <img src={theme.type === "light" ? IMAGES.iconMoon : IMAGES.iconSun} alt="" />
                         </button>
                     </section>
                     <TodoApp.Provider
                         value={{
                             images: IMAGES,
+                            theme: theme.type,
                             todos: this.state.todoList,
                             addNewTodo: this.addNewTodo,
                             toggleActiveState: this.toggleActiveState,
                             toggleCompleteState: this.toggleCompleteState,
                             deleteTodo: this.deleteTodo,
+                            draggable: this.state.draggable,
+                            onDragStartHandler: this.onDragStartHandler,
+                            onDragOverHandler: this.onDragOverHandler,
+                            onDragEndHandler: this.onDragEndHandler,
+                            onDragDropHandler: this.onDragDropHandler,
                         }}
                     >
                         <TodoMaker />
                         <section id='todo-container'>
                             <TodoList />
-                            <div id="todo-state">
-                                <div id='items-count'>{this.state.todos.filter(todo => todo.isDone === false).length} items left</div>
-                                <div className='filter'>
-                                    <button onClick={this.filterAllHandler} ref={this.filterAllRef}
-                                        className='btn' id='filter-all'>all</button>
-                                    <button onClick={this.filterActiveHandler} ref={this.filterActiveRef}
-                                        className='btn' id='filter-active'>active</button>
-                                    <button onClick={this.filterCompletedHandler} ref={this.filterCompletedRef}
-                                        className='btn' id='filter-completed'>completed</button>
-                                </div>
-                                <button className='btn' id='clear-completed'>clear completed</button>
-                            </div>
                         </section>
-
+                        <div id='count-items-left' className={theme.type}>
+                            {this.state.mainList.filter(todo => todo.isDone === false).length} items left
+                        </div>
+                        <div id='filter' ref={this.filter1Ref} className={theme.type}>
+                            <button
+                                onClick={this.filterAllHandler} ref={this.filterAllRef}
+                                className={theme.type} id='filter-all'>all</button>
+                            <button
+                                onClick={this.filterActiveHandler} ref={this.filterActiveRef}
+                                className={theme.type} id='filter-active'>active</button>
+                            <button
+                                onClick={this.filterCompletedHandler} ref={this.filterCompletedRef}
+                                className={theme.type} id='filter-completed'>completed</button>
+                        </div>
+                        <button
+                            onClick={this.clearCompleted}
+                            className={theme.type}
+                            id='cc-btn'
+                        > clear completed
+                        </button>
                     </TodoApp.Provider>
-                    <section className='filter'></section>
-                    <section className='filter'></section>
-                    <section id="todo-guide">drag and drop for order todos</section>
+                    <section id="todo-guide">drag and drop to reorder list</section>
                 </section>
-            </>
+            </section>
         );
+    }
+
+
+    // ========================= toggle theme ============================= // 
+    toggleTheme = () => {
+        const newTheme = this.state.theme.type === "light" ? "dark" : "light";;
+        this.updateData(
+            this.state.mainList,
+            {
+                type: newTheme,
+                backgroundImage: [IMAGES.bgMobileLight, IMAGES.bgMobileDark],
+            }
+        );
+    }
+
+    // ========================= update Todos ============================= // 
+    updateData = (newTodos = [], newTheme = {}) => {
+        // update todo state and localStorage
+        this.setState({ mainList: newTodos, theme: newTheme });
+        localStorage.setItem("todoApp", JSON.stringify({
+            theme: newTheme,
+            todos: newTodos,
+        }));
+        // update filter list
+        this.setState({ todoList: newTodos });
     }
 
     // ========================= todo filter ============================= // 
 
-    filterTodos = (key) => {
-        switch (key) {
+    filter = (type) => {
+        switch (type) {
             case "all":
-                this.setState({ todoList: [...this.state.todos] });
+                this.filterAllHandler();
                 break;
             case "active":
-                this.setState({
-                    todoList: this.state.todos.filter(todo => todo.isActive === true)
-                })
+                this.filterActiveHandler();
                 break;
             case "completed":
-                this.setState({
-                    todoList: this.state.todos.filter(todo => todo.isDone === true)
-                })
+                this.filterCompletedHandler();
                 break;
             default:
-                return
+                return 0;
         }
     }
 
-
     filterAllHandler = (e) => {
-        this.filterAllRef.current.style.color = 'var(--link-active)'
-        this.filterActiveRef.current.style.color = 'var(--dt-txt-default)'
-        this.filterCompletedRef.current.style.color = 'var(--dt-txt-default)'
-        this.filterTodos("all");
+        this.filterAllRef.current.className = 'active';
+        this.filterActiveRef.current.className = '';
+        this.filterCompletedRef.current.className = '';
+        this.setState({ todoList: [...this.state.mainList] });
+        this.setState({ draggable: true, filterType: "all" });
     }
 
     filterActiveHandler = (e) => {
-        this.filterAllRef.current.style.color = 'var(--dt-txt-default)'
-        this.filterActiveRef.current.style.color = 'var(--link-active)'
-        this.filterCompletedRef.current.style.color = 'var(--dt-txt-default)'
-        this.filterTodos("active");
+        this.filterAllRef.current.className = '';
+        this.filterActiveRef.current.className = 'active';
+        this.filterCompletedRef.current.className = '';
+        this.setState({ todoList: this.state.mainList.filter(todo => todo.isActive === true) })
+        this.setState({ draggable: false, filterType: "active" });
     }
 
     filterCompletedHandler = (e) => {
-        this.filterAllRef.current.style.color = 'var(--dt-txt-default)'
-        this.filterActiveRef.current.style.color = 'var(--dt-txt-default)'
-        this.filterCompletedRef.current.style.color = 'var(--link-active)'
-        this.filterTodos("completed");
+        this.filterAllRef.current.className = '';
+        this.filterActiveRef.current.className = '';
+        this.filterCompletedRef.current.className = 'active';
+        this.setState({ todoList: this.state.mainList.filter(todo => todo.isDone === true) })
+        this.setState({ draggable: false, filterType: "completed" });
     }
 
     // ========================= todo controller ============================= //
     addNewTodo = (name, active) => {
-        const { todos } = this.state;
+        const { mainList: newTodos } = this.state;
         const id = Date.now();
-        todos.push({ id: id, name: name, isActive: active, isDone: false })
-        this.setState({ todos: todos })
+        newTodos.push({ id: id, name: name, isActive: active, isDone: false })
+        this.updateData(newTodos, this.state.theme);
+        this.filter(this.state.filterType);
     }
 
     toggleActiveState = (id) => {
-        // this function for change active state any todo
-        let { todos: newTodos } = this.state
+        // this function for change active state any todo 
+        let { mainList: newTodos } = this.state
         const index = newTodos.findIndex(todo => todo.id === id);
         newTodos[index].isActive = (newTodos[index].isActive) ? false : true;
-        this.setState({ todos: newTodos });
+        this.updateData(newTodos, this.state.theme);
+        this.filter(this.state.filterType);
     }
 
     toggleCompleteState = (id) => {
-        let { todos: newTodos } = this.state
+        let { mainList: newTodos } = this.state
         const index = newTodos.findIndex(todo => todo.id === id);
         newTodos[index].isDone = (newTodos[index].isDone) ? false : true;
-        this.setState({ todos: newTodos });
+        this.updateData(newTodos, this.state.theme);
+        this.filter(this.state.filterType);
     }
 
     deleteTodo = (id) => {
-        let { todos } = this.state
-        const newTodos = todos.filter(todo => todo.id !== id);
-        this.setState({ todos: newTodos });
+        const newTodos = this.state.mainList.filter(todo => todo.id !== id);
+        this.updateData(newTodos, this.state.theme);
     }
 
-    componentDidMount(){
-        this.filterTodos("all");
+    clearCompleted = () => {
+        const newTodos = this.state.mainList.filter(todo => todo.isDone === false);
+        this.updateData(newTodos, this.state.theme);
     }
+
+    // ========================= life cycle method's ============================= //
+    componentDidMount() {
+        if (typeof localStorage.getItem('todoApp') !== "string") {
+            // create a template for save data (todos&theme)
+            localStorage.setItem("todoApp", JSON.stringify({}));
+        }
+        // initialize todoList state for display todos
+        if (this.state.mainList !== []) {
+            this.filter(this.state.filterType);
+        }
+
+        // window resize event
+        window.addEventListener('resize', () => {
+            this.setState({ dimensions: [window.innerWidth, window.innerHeight] })
+            if (window.innerWidth < 550) {
+                // mobile
+                this.setState({
+                    theme: {
+                        type: this.state.theme.type,
+                        backgroundImage: [IMAGES.bgMobileLight, IMAGES.bgMobileDark]
+                    }
+                });
+                // change filter container
+
+            } else {
+                // desktop
+                this.setState({
+                    theme: {
+                        type: this.state.theme.type,
+                        backgroundImage: [IMAGES.bgDesktopLight, IMAGES.bgDesktopDark]
+                    }
+                });
+                // change filter container
+
+            }
+        });
+    }
+
+    // ========================= drag and drop method's ============================= //
+
+    // Get index of todo which that Element is dragged
+    dragged = null;
+
+    onDragStartHandler = (ref, home) => {
+        ref.current.style.opacity = '0.2';
+        this.dragged = home;
+    }
+
+
+    onDragEndHandler = (ref, home) => {
+        ref.current.style.opacity = '1';
+    }
+
+    onDragDropHandler = (ref, home) => {
+
+        let draggedpos = this.dragged;
+        let droppedpos = home;
+
+        const { todoList } = this.state;
+        let todoDragged = todoList[draggedpos];
+        // get new list from todos and removed todo is dragging
+        let newTodos = todoList.filter(todo => todo !== todoDragged);
+        // change position todo from list
+        newTodos.splice(droppedpos, 0, todoDragged);
+        // update list
+        this.setState({ mainList: newTodos });
+        this.setState({ todoList: newTodos });
+
+        localStorage.setItem("todoApp", JSON.stringify({
+            theme: this.state.theme,
+            todos: newTodos,
+        }));
+    }
+
+
 
 }
+
+
 
 export default App;

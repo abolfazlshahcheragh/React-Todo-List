@@ -9,293 +9,357 @@
 }
 
 :root {
-    --link-active: #4977db;
-    /* color primary (RGB)*/
-    --Check-Background-first: 87, 221, 255;
-    /* active*/
-    --Check-Background-second: 192, 88, 243;
-    /* Light Theme */
-    --lt-root-background: #F5F5F5;
-    --lt-app-background: #ffffff;
-    --lt-txt-default: #a8a8a8;
-    --lt-txt-hover: #505050;
-    --lt-txt-light: #dcdcdc;
-    /* Dark Theme */
-    --dt-root-background: #181824;
-    --dt-app-background: #25273C;
-    --dt-txt-default: #BCBED5;
-    --dt-txt-hover: #CED2DE;
-    --dt-txt-dark: #484A63;
-
-    /* Typography */
+    /* checkbox: active todo */
+    --checkBox-bg-color1: 87, 221, 255;
+    --checkBox-bg-color2: 192, 88, 243;
+    /* typography */
+    --font-size: 1.2rem;
+    --font-size-small: .9rem;
     --font-family: JosefinSans;
     --font-family-bold: JosefinSansBold;
 }
 
-#app {
-    z-index: 1;
-    width: 420px;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    /* gap 30px gap  */
-    grid-template-rows: repeat(6, 1fr);
-    grid-auto-rows: auto;
-    /* border: 1px solid #f00; */
-    margin: 0 30px;
+[class*="light"] {
+    --background: hsl(235, 32%, 92%);
+    --bg-element: hsl(0, 0%, 100%);
+    --task-color: hsl(237, 11%, 34%);
+    --task-completed: hsl(240, 3%, 70%);
+    --btn-color: rgb(170, 170, 180);
+    --btn-hover-color: hsl(233, 11%, 33%);
+    --btn-active-color: hsl(220, 52%, 53%);
+    --checkbox-border: hsl(0, 0%, 90%);
+    --border: hsl(260, 11%, 95%);
+    --sample: red
+}
+
+[class*="dark"] {
+    --background: hsl(235, 21%, 11%);
+    --bg-element: hsl(235, 24%, 19%);
+    --task-color: hsl(233, 15%, 69%);
+    --task-completed: hsl(233, 12%, 39%);
+    --btn-color: hsl(236, 14%, 39%);
+    --btn-filter-color: hsl(236, 13%, 42%);
+    --btn-hover-color: hsl(231, 44%, 92%);
+    --btn-active-color: hsl(220, 52%, 53%);
+    --checkbox-border: hsl(0, 0%, 24%);
+    --border: hsl(235, 18%, 25%);
+    --sample: blue;
+}
+
+.active {
+    color: blue !important;
 }
 
 
-#bgImage {
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: JosefinSans, sans-serif;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+#root {
     z-index: 0;
+    width: 100%;
+
+}
+
+#wrapper {
+    z-index: 1;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    background: var(--background);
+}
+
+#bgImage {
+    z-index: 2;
     position: absolute;
     top: 0;
     width: 100%;
     height: 250px;
 }
 
-/* ========================== app header ============================ */
-#header {
-    grid-row: 1/1 span;
+#app {
+    z-index: 3;
+    width: 480px;
+    height: auto;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    /* border: 1px solid #000; */
-    margin: 50px 0 40px 0;
+    grid-template-columns: repeat(4, auto);
+    grid-auto-columns: auto;
+    grid-template-rows: 100px 80px 310px 50px auto;
+    grid-auto-rows: 1fr;
+}
+
+/* ========================= header ============================= */
+#header {
+    background: transparent;
+    grid-area: 1/1/1 span/ -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
 }
 
 #header>h3 {
-    align-self: center;
-    justify-self: start;
-    font-family: var(--font-family-bold);
-    letter-spacing: 10px;
+    color: #ffffff;
     text-transform: uppercase;
-    color: #F7F7F9;
+    font-size: 2rem;
+    letter-spacing: 10px;
 }
 
 #header>button {
-    align-self: center;
-    justify-self: end;
     background: transparent;
     border: none;
     cursor: pointer;
-    display: grid;
-    margin-bottom: 5px;
+    width: fit-content;
+    height: fit-content;
 }
 
-#header>button>img {
-    transform: scale(.85);
-}
-
-/* ========================== todo maker ============================ */
+/* ========================= todo-maker ============================= */
 #todo-maker {
-    grid-row: 2/1 span;
-    /* border: 1px solid #f00; */
-    height: 50px;
-    margin-bottom: 20px;
-    /*  */
-    display: grid;
-    grid-template-columns: 50px 1fr;
-    background: #fff;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-#todo-maker input {
-    width: 100%;
-}
-
-/* ========================== task state (checkBox) ============================ */
-
-.check-container {
+    grid-area: 2/1/1 span/ -1;
+    margin-top: 30px;
+    background: var(--bg-element);
     display: flex;
-    justify-content: center;
     align-items: center;
+    padding: 0 20px;
+    border-radius: 5px;
 }
 
-.check-container .check-box {
-    width: 30px;
-    height: 30px;
+input[type=checkbox] {
+    display: none;
+}
+
+.checkBox {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-content: center;
     border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+    /* margin: 10px 0; */
     cursor: pointer;
-}
-
-.not-checked {
-    border: 2px solid var(--lt-txt-light);
-    background: transparent;
-}
-
-.checked {
-    border: none;
-    background: linear-gradient(120deg, rgb(var(--Check-Background-first)), rgb(var(--Check-Background-second)));
-}
-
-/* ========================== input task ============================ */
-#todo-maker>input {
-    border: none;
-    caret-color: var(--link-active);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: .8rem;
-    /* border: 1px solid #000; */
-    color: var(--dt-txt-dark);
-    font-family: var(--font-family);
-}
-
-/* #todo-maker>input::placeholder {} */
-
-
-/* ========================== todo container ============================ */
-#todo-container {
-    grid-row: 3/1 span;
-    /* background: blue; */
-    /* border: 1px solid #f00; */
-    height: 300px;
-    margin-bottom: 20px;
-    border-radius: 5px;
     overflow: hidden;
-    background: var(--lt-app-background);
-    display: grid;
-    grid-template: 1fr 50px / 1fr;
+    background: var(--checkbox-border);
+    position: relative;
 }
 
-/* ========================== todo list ============================ */
-#todo-container>ul {
+.checkBox:hover {
+    background: linear-gradient(rgb(var(--checkBox-bg-color1)), rgb(var(--checkBox-bg-color2)));
+}
 
-    list-style-type: none;
-    display: grid;
-    grid-template: 50px / 1fr;
-    grid-auto-rows: 50px;
+.checkBox::after,
+.checkBox::before {
+    content: '';
+    position: absolute;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-element);
+}
+
+[type=checkbox]:checked+.checkBox::before {
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(rgb(var(--checkBox-bg-color1)), rgb(var(--checkBox-bg-color2)));
+}
+
+[type=checkbox]:checked+.checkBox::after {
+    background: url("../assets/images/icon-check.svg") no-repeat center;
+}
+
+
+#todo-maker>input[type=text] {
+    flex: 1 1 auto;
+    height: 100%;
+    padding: 0 20px;
+    border: none;
+    font-size: var(--font-size);
+    color: var(--task-color);
+    background: transparent;
+    caret-color: var(--btn-active-color);
+}
+
+/* ========================= todo container ============================= */
+#todo-container {
+    grid-area: 3/1/1 span/ -1;
+    overflow: hidden;
+    margin-top: 15px;
+    border-radius: 5px 5px 0 0;
+}
+
+#todo-container ul {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-element);
+    overflow: hidden;
     overflow-y: scroll;
 }
 
-#todo-container>ul::-webkit-scrollbar {
+#todo-container ul::-webkit-scrollbar {
     display: none;
 }
-#todo-container>ul>li:first-child{
-    border-top: none;
-}
-#todo-container>ul>li {
-    border-top: 3px solid var(--lt-root-background);
+
+/* ========================= todo list ============================= */
+#todo-container ul>li {
     width: 100%;
-    display: grid;
-    grid-template: 1fr/ 50px 1fr 50px;
-
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
 }
 
-#todo-container>ul>li>p {
+#todo-container ul>li:not(:first-child) {
+    border-top: 2px solid var(--border);
+}
+
+
+/* todo name */
+#todo-container ul>li>p {
+    width: 90%;
+    height: inherit;
     display: flex;
     align-items: center;
-    font-size: .8rem;
-    margin: 0 5px;
-    cursor: pointer;
-    font-family: var(--font-family);
-}
-
-.not-completed {
-    color: var(--lt-txt-hover);
-}
-
-.completed {
-    color: var(--lt-txt-default);
-    text-decoration: line-through;
-    font-style: italic;
-}
-
-#todo-container>ul>li button {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    font-size: .5rem;
-    cursor: pointer;
-}
-
-#todo-container>ul>li button.delete-box {
-    border: none;
-    border-radius: 0;
-    border-radius: 50%;
+    font-size: var(--font-size);
+    padding: 0 5px;
     background: transparent;
+    color: var(--task-color);
+    word-break: break-all;
+    overflow: hidden;
+    border: none;
 }
 
-#todo-container>ul>li button.delete-box img {
+#todo-container ul>li>p::-webkit-scrollbar {
+    display: none;
+}
+
+/* delete button */
+#todo-container ul>li>div {
+    width: fit-content;
+    height: 100%;
+    display: grid;
+    place-content: center;
+}
+
+#todo-container ul>li>div>button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
     transform: scale(.8);
 }
 
-/* ========================== todo state ============================ */
-#todo-state {
-    border-top: 3px solid var(--lt-root-background);
+.completed {
+    color: var(--task-completed) !important;
+    text-decoration: line-through;
+}
+
+/* ========================= todo state control ============================= */
+#count-items-left {
+    background: var(--bg-element);
+    grid-area: 4/1/1 span/ 1 span;
+    border-radius: 0 0 0 5px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: var(--font-size-small);
+    color: var(--btn-color) !important;
+}
+
+#filter {
+    background-color: var(--bg-element);
+    grid-area: 4/2/1 span/ 2 span;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0 10PX;
 }
 
-#items-count {
-    flex: 1 1 33%;
-    font-size: .5rem;
-    font-family: var(--font-family);
-    color: var(--lt-txt-default);
-}
-
-.filter {
-    flex: 1 1 33%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-}
-
-.filter :nth-child(2) {
+#filter button:nth-child(2) {
     margin: 0 10px;
 }
 
-.btn {
-    border: none;
+#filter button {
     background: transparent;
-    color: var(--dt-txt-default);
-    cursor: pointer;
-    font-size: .5rem;
+    border: none;
     text-transform: capitalize;
+    font-size: var(--font-size-small);
+    font-family: var(--font-family-bold);
+    color: var(--btn-color);
+    cursor: pointer;
 }
 
-.btn-hover{
-    color: var(--link-active);
+#filter button:hover {
+    color: var(--btn-hover-color) !important;
 }
 
-#clear-completed {
-    flex: 1 1 33%;
+#cc-btn {
+    min-width: 100px;
+    background-color: var(--bg-element);
+    grid-area: 4/4/1 span/ 1 span;
+    border-radius: 0 0 5px 0;
+    border: none;
+    cursor: pointer;
     display: flex;
-    justify-content: end;
-    font-family: var(--font-family);
-}
-#clear-completed:active{
-    color: var(--link-active); 
-}
-
-.bgRed{
-    background: red;
-}
-
-/* ========================== other ============================ */
-
-.filter {
-    grid-row: 4/1 span;
-    background: white;
-    height: 50px;
+    justify-content: flex-end;
+    align-items: center;
+    text-transform: capitalize;
+    font-size: var(--font-size-small);
+    color: var(--btn-color) !important;
+    padding: 0 20px;
 }
 
 #todo-guide {
-    margin-top: 10px;
-    grid-row: 5/1 span;
-    background: yellow;
-    font-size: 1rem;
-    height: 1em;
+    margin-top: 40px;
+    height: 20px;
+    background: transparent;
+    grid-area: 5/1/1 span/ -1;
+    justify-self: center;
+    color: var(--task-completed);
+}
+
+#todo-guide::first-letter {
+    text-transform: uppercase;
+}
+
+/* ========================= config MEDIA ============================= */
+@media only screen and (max-width:768px) {
+    #wrapper {
+        padding: 0 10px;
+    }
+
+    #count-items-left {
+        grid-area: 4/1/1 span/ 2 span;
+    }
+
+    #filter {
+        height: 50px;
+        margin-top: 15px;
+        grid-area: 5/1/1 span/ -1;
+        border-radius: 5px;
+    }
+
+    #cc-btn {
+        grid-area: 4/3/1 span/ 2 span;
+    }
+
+    #todo-guide {
+        grid-area: 6/1/1 span/ -1;
+        height: 20px;
+    }
 }
