@@ -8,24 +8,26 @@ import TodoList from './TodoList';
 
 class App extends Component {
     static contextType = createContext(TodoApp);
-
     constructor(props) {
         super(props);
+        // Checking the existence of data in local storage
+        const storage = JSON.parse(localStorage.getItem("todoApp"))
+        const { todos, theme } = storage === null ? { todos: [], theme: {} } : storage;
         this.state = {
             device: "mobile",
             dimensions: [window.innerWidth, window.innerHeight],
-            // theme: (typeof localStorage.getItem('todoApp') === "string") ? JSON.parse(localStorage.getItem("todoApp")).theme : {},
             theme: {
-                type: (typeof localStorage.getItem('todoApp') === "string") ? JSON.parse(localStorage.getItem("todoApp")).theme.type : "light",
-                backgroundImage: [IMAGES.bgMobileLight, IMAGES.bgMobileDark],
+                type: theme.type,
+                backgroundImage: theme.backgroundImage,
             },
             // main list
-            mainList: (typeof localStorage.getItem('todoApp') === "string") ? JSON.parse(localStorage.getItem("todoApp")).todos : [],
+            mainList: todos,
             // filter list
             todoList: [],
             filterType: "all",
             draggable: true,
         }
+        // filter Refs
         this.filterRef = createRef();
         this.filterAllRef = createRef();
         this.filterActiveRef = createRef();
@@ -54,6 +56,7 @@ class App extends Component {
                             addNewTodo: this.addNewTodo,
                             toggleActiveState: this.toggleActiveState,
                             toggleCompleteState: this.toggleCompleteState,
+                            todoFinder: this.todoFinder,
                             deleteTodo: this.deleteTodo,
                             draggable: this.state.draggable,
                             onDragStartHandler: this.onDragStartHandler,
@@ -160,6 +163,14 @@ class App extends Component {
         this.setState({ draggable: false, filterType: "completed" });
     }
 
+    todoFinder = (str) => {
+        // this method for find one or more todo into main list 
+        const { mainList: newTodos } = this.state;
+        this.setState({
+            todoList: newTodos.filter(todo => todo.name.toLowerCase().includes(str.toLowerCase()))
+        });
+    }
+
     // ========================= todo controller ============================= //
     addNewTodo = (name, active) => {
         const { mainList: newTodos } = this.state;
@@ -210,26 +221,16 @@ class App extends Component {
         // window resize event
         window.addEventListener('resize', () => {
             this.setState({ dimensions: [window.innerWidth, window.innerHeight] })
-            if (window.innerWidth < 550) {
-                // mobile
-                this.setState({
-                    theme: {
-                        type: this.state.theme.type,
-                        backgroundImage: [IMAGES.bgMobileLight, IMAGES.bgMobileDark]
-                    }
-                });
-                // change filter container
-
-            } else {
-                // desktop
-                this.setState({
-                    theme: {
-                        type: this.state.theme.type,
-                        backgroundImage: [IMAGES.bgDesktopLight, IMAGES.bgDesktopDark]
-                    }
-                });
-                // change filter container
-
+            if (window.innerWidth < 550) { // mobile 
+                this.updateData(this.state.mainList, {
+                    type: this.state.theme.type,
+                    backgroundImage: [IMAGES.bgMobileLight, IMAGES.bgMobileDark]
+                })
+            } else { // desktop
+                this.updateData(this.state.mainList, {
+                    type: this.state.theme.type,
+                    backgroundImage: [IMAGES.bgDesktopLight, IMAGES.bgDesktopDark]
+                })
             }
         });
     }

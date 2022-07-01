@@ -14,7 +14,7 @@ function TodoMaker() {
                 <input type="checkbox" ref={checkBoxRef} />
                 <div className="checkBox"></div>
             </label>
-            <input ref={inputTxtRef} onKeyDown={addTodo} type="text" placeholder="Create a new todo..." />
+            <input ref={inputTxtRef} onKeyDown={addTodo} onChange={() => { context.todoFinder(inputTxtRef.current.value) }} type="text" placeholder="Create a new todo..." />
         </section>
     );
 

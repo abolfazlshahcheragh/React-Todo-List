@@ -8,6 +8,7 @@
 - drag and drop todo
 - change theme
 - storage data in local Storage
+- Search feature between todos
 
 ![img1](./template/design/active-states-dark.jpg)
 
